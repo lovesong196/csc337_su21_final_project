@@ -1,0 +1,36 @@
+
+<!doctype html>
+<html lang="en">
+        <head>
+                 <meta charset="utf-8"/>
+		<title>Ostaa</title>
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script src="code.js" id="JsFile"></script>
+        </head>
+	<h1>Ostaa</h1>
+	<h3>Login</h3>
+
+			<div id='login'>
+			<label for="usrNameL">Username</label>
+			<input type="text" id="usrNameL"><br><br>
+
+			<label for="passL">Password</label>
+			<input type="password" id="passL"><br><br>
+			<div id='errMsg'></div>
+		</div>
+		<input type="submit" value="Login" onclick='loginUser();'><br><br>
+
+
+		<h3>Create Account</h3>
+		<div id='create'>
+			<label for="usrNameC">Username</label>
+                        <input type="text" id="usrNameC"><br><br>
+
+                        <label for="passC">Password</label>
+                        <input type="password" id="passC"><br><br>
+
+		</div>
+	<input type="submit" value="Create User" onclick='createUser();'><br><br>
+
+</html> 
