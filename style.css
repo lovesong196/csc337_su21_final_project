@@ -1,0 +1,42 @@
+body{
+	background:RGB(252, 237,  245);
+
+}
+
+h3{
+	padding:0px;
+	margin:10px;
+	color:RGB(30, 83, 94);
+	font-size:23px;	
+}
+h1{
+	text-align:center;
+	font-size:50px;
+	padding:0px;
+	margin-top:30px;
+}
+label{
+	font-size:16px;
+	color:black;
+}
+
+div{
+	margin:0;
+	position:absolute;
+	top:50%;
+	-ms-transform:translateY(-50%);
+	transform:translateY(-50%);
+	text-align:center;
+	width:100%;
+}
+#errMsg{
+	font-family:arial;
+	font-size:14px;
+	color:red;
+}
+
+#loginB{
+	margin-right:10px;
+}
+	
+
