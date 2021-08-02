@@ -1,15 +1,26 @@
 <!doctype html>
 
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Lobby</title>
-  <link rel="icon" href="/favicon.ico">
-  <link rel="stylesheet" href="css/styles.css?v=1.0">
-</head>
+	<head>
+  		<meta charset="utf-8">
+  		<title>Lobby</title>
+  		<link rel="icon" href="/favicon.ico">
+		<link rel="stylesheet" href="css/styleL.css">
+	</head>
+	<h1>Join or Create a Lobby</h1>
 
-<body>
-  <!-- your content here... -->
-  <script src="js/scripts.js"></script>
-</body>
+	<body>
+		<table>
+	    		<tr id='header'> <td class='room'>Lobby Name</td> <td> Status </td></tr>
+	    		<tr class='content'> <td class='room'>Lobby 1</td> <td> <input type="submit" class='button' id='join' value="Join" onclick='join();'></td></tr>
+	    		<tr class='content'> <td class ='room'>Lobby 2</td> <td> <input type="submit" class='button' id='join'value="Join" onclick='join();'></td></tr>
+	    		<tr class='content'> <td  id='last' class ='room'>Lobby 3</td> <td id='last' class ='full' >Full</td></tr>
+
+		</table>
+
+			<input type="submit" class='button' value="Play Against AI" onclick='playAI();'>
+			<input type="submit" class='button' value="Create Room" onclick='createRoom();'><br><br>
+
+		<script src="js/scripts.js"></script>
+	</body>
 </html>
