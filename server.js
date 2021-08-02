@@ -1,12 +1,11 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cookieParser = require('cookie-parser');
-const port = 80;
-var app = express();
-app.use(express.json());
-app.use(cookieParser());
+const express = require('express')
+const app = express()
+const port = 3000
 
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
 
-app.get("/", (req, res)=> res.end("OK"));
-
-app.listen(port);
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`)
+})
