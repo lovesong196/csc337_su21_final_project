@@ -7,27 +7,25 @@ This method send a request to the server for creating a user.
 */
 
 function createUser (){
-    var httpRequest = new XMLHttpRequest();
-
-    if (!httpRequest){
-        alert('Error!');
-        return false
-    }
-    httpRequest.onreadystatechange = () =>{
-        if ( httpRequest.readyState === XMLHttpRequest.DONE){
-            if ( httpRequest.status === 200){
-                alert(httpRequest.responseText)
-            }else {alert('ERROR');}
+    $.ajax({
+        type: "POST",
+        url: "/add/user/",
+        data: JSON.stringify(
+            {
+                username: $("#usrNameC").val(),
+                password: $("#passC").val()
+            }
+        ),
+        dataType: "text",
+        contentType:"application/json; charset=utf-8",
+        success: function (response) {
+            if(response == "SUCCESS"){
+                $("#createInfo").html("<div style=\"color: green\">User created.</div>")
+            } else {
+                $("#createInfo").html("<div style=\"color: red\">User created.</div>")
+            }
         }
-    }
-
-    let usr = $('#usrNameC'); 
-    let pass = $('#passC'); 
-    usrInfo = JSON.stringify({name:usr[0].value, pass:pass[0].value});
-    let params = 'usrInfo=' + usrInfo;
-    httpRequest.open('POST', '/add/user', true);
-    httpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    httpRequest.send(params);
+    });
 }
 
 /*
