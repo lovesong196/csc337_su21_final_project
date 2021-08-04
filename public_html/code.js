@@ -25,7 +25,7 @@ function createUser(){
                 $("#createInfo").html("<div style=\"color: red\">Error.</div>")
             }
         }
-    });
+    })
 }
 
 /*
@@ -49,12 +49,12 @@ function loginUser(){
         success: function (response) {
             console.log(response)
             if(response == "SUCCESS"){
-                document.location.href="/home.html"
+                document.location.href="/lobby.html"
             } else {
                 $("#loginInfo").text("Invalid login information provided.")
             }
             
         }
-    });
+    })
 }
 

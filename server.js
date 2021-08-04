@@ -129,6 +129,18 @@ app.post("/login/", (req, res)=>{
     }, errHandler)
     .catch(errHandler)
 })
+// remove outdated sessions every 10 seconds
+setInterval(()=>{
+    Session.find({})
+    .then((results)=>{
+        const now = Date.now()
+        for(session of results){
+            if(session.expire < now){
+                session.remove()
+            }
+        }
+    })
+}, 10 * 1000)
 // ========= LOGIN ENDS ===== //
 app.get('/index.html', (req, res)=>{
     // check if session is valid
@@ -147,11 +159,38 @@ app.get('/index.html', (req, res)=>{
     }
 })
 app.get('/lobby.html', (req, res)=>{
-    res.sendFile('public_html/index.html', { root: '.' })
+    const session = req.cookies.login
+    if(!session){
+         res.redirect('index.html')
+    } else {
+        Session.findById(ObjectId(session._id))
+            .then((results)=>{
+                if(results.length == 0){
+                    res.redirect('index.html')
+                    
+                } else {
+                    res.sendFile('public_html/lobby.html', { root: '.' })
+                }
+            })
+    }
 })
 app.get('/game.html', (req, res)=>{
-    res.sendFile('public_html/game.html', { root: '.' })
+    const session = req.cookies.login
+    if(!session){
+         res.redirect('index.html')
+    } else {
+        Session.findById(ObjectId(session._id))
+            .then((results)=>{
+                if(results.length == 0){
+                    res.redirect('index.html')
+                    
+                } else {
+                    res.sendFile('public_html/game.html', { root: '.' })
+                }
+            })
+    }
 })
+app.use(express.static('public_html'))
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
