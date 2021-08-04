@@ -1,15 +1,28 @@
 <!doctype html>
 
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Game</title>
-  <link rel="icon" href="/favicon.ico">
-  <link rel="stylesheet" href="css/styles.css?v=1.0">
-</head>
+        <head>
+                <meta charset="utf-8">
+                <title>Game</title>
+                <link rel="icon" href="/favicon.ico">
+                <link rel="stylesheet" href="css/styleG.css">
+        </head>
 
-<body>
-  <!-- your content here... -->
-  <script src="js/scripts.js"></script>
-</body>
-</html>
+        <body>
+               
+                <div class='player' id='player1'>
+                        Adnan
+                        <div class='ready' id='readyP1'><input type="submit" class='button' value="Ready?" onclick='ready();'></div>
+                </div>  
+                
+                <div id='board'><img id='boardImg' src='Images/board.jpg' width='650px'></div>
+
+                <div class='player' id='player2'>
+                        Chen
+                        <div class='ready' id='readyP2'><img src='Images/ready.png' width='50px' onclick='ready();'></div>
+
+                </div>  
+
+                <script src="js/scripts.js"></script>
+        </body>
+</html> 
