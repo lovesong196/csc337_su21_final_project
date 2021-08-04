@@ -17,13 +17,13 @@ const SessionSchema = new Schema(
 )
 const AccountSchema = new Schema(
     {
-        username: String,
         salt: String,
         hash: String
     }
 )
 const UserSchema = new Schema(
     {
+        username: String,
         account: Schema.Types.ObjectId,
         status: String,
         room: Schema.Types.ObjectId
@@ -43,6 +43,7 @@ app.use(cookieParser())
 app.use(express.static("public_html"))
 // ========= CONST ========== //
 const port = 3000
+const iterations = 1000
 const MSG = {
     SUCCESS: 'SUCCESS',
     ERROR: 'ERROR'
@@ -51,42 +52,80 @@ const MSG = {
 // ==== UTILITY FUNCTIONS === //
 function errHandler(err){
     if(err) {
-        console.log(error)
+        console.log(err)
     }
+}
+function ObjectId(id){
+    return mongoose.Types.ObjectId(id)
 }
 // = UTILITY FUNCTIONS ENDS = //
 // ========= LOGIN ========== //
-function hashPass(password, cb){
-    const salt = crypto.randomBytes(64).toString('base64')
-    const iterations = 1000
+function hashPass(password, salt, cb){
+    if(!salt){
+        salt = crypto.randomBytes(64).toString('base64')
+    }
     crypto.pbkdf2(password, salt, iterations, 64, 'sha512', (err, hash) =>{
         if (err) throw err
-        console.log(salt, hash)
-        cb(salt, hash)
+        cb(salt, hash.toString('hex'))
     })
 }
 
 app.post('/add/user', (req, res)=>{
-    const username = req.body["username"]
-    const password = req.body["password"]
-    hashPass(password, (salt, hash)=>{
-        let newAccount = Account({
-            username: username,
-            salt: salt,
-            hash: hash
-        })
-        let newUser = User({
-            account: newAccount._id,
-            status: "Free",
-            room: null
-        })
-        newAccount.save(errHandler)
-        newUser.save(errHandler)
-
+    const username = req.body['username']
+    const password = req.body['password']
+    User.find({username: username})
+    .then((results)=>{
+        if(results.length != 0){
+            res.send(MSG.ERROR);
+            return Promise.reject(`The username "${username}" has been taken`)
+        }
     })
+    .then(()=>{
+        hashPass(password, null, (salt, hash)=>{
+            let newAccount = Account({ 
+                salt: salt,
+                hash: hash
+            })
+            let newUser = User({
+                username: username,
+                account: newAccount._id,
+                status: 'Free',
+                room: null
+            })
+            newAccount.save(errHandler)
+            newUser.save(errHandler)
+            res.send(MSG.SUCCESS);
+        })
+    }, errHandler)
+    .catch(errHandler)
 })
 
-
+app.post("/login/", (req, res)=>{
+    var username = req.body['username']
+    var password = req.body['password']
+    User.find({username: username})
+    .then((results)=>{
+        if(results.length == 0){
+            res.send(MSG.ERROR);
+            return Promise.reject(`User "${username}" does not exist.`)
+        }
+        return results[0]
+    })
+    .then((result)=>{
+        const accountId = result.account
+        return Account.findById(ObjectId(accountId))
+    }, errHandler)
+    .then((account) => {
+        hashPass(password, account.salt, (salt, hash)=>{
+            if(hash == account.hash){
+                res.send(MSG.SUCCESS)
+            } else {
+                res.send(MSG.ERROR)
+            }
+        })
+    }, errHandler)
+    .catch(errHandler)
+});
 // ========= LOGIN ENDS ===== //
 app.get('/', (req, res) => {
   res.send('Hello World!')
