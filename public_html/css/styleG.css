@@ -1,0 +1,55 @@
+body{
+	margin:0px;
+}
+.player{
+	padding-bottom:15px;
+	position:fixed;
+	width:50%;
+	background:grey;
+	font-size:30px;
+	color:white;
+	padding-top:15px;
+}
+
+#player1{
+
+	padding-left:10px;
+}
+
+#player2{
+	text-align:right;
+	top:0px;
+	right:0px;
+	padding-right:10px;
+}
+
+input{
+	font-size:25px;
+	color:green;
+	text-align:center;
+}
+
+.ready{
+	position:fixed;
+	text-align:center;
+	width:50%;
+	margin:0px;
+	top:10px;
+}
+
+#readyP1{
+}
+
+#readyP2{
+
+}
+
+#boardImg{
+	float:50%;
+	margin-top:80px	
+}
+
+#board{
+	text-align:center;
+
+}
