@@ -6,7 +6,7 @@ This method send a request to the server for creating a user.
 @return null
 */
 
-function createUser (){
+function createUser(){
     $.ajax({
         type: "POST",
         url: "/add/user/",
@@ -34,7 +34,7 @@ This method send a request to the server with a user credintials for login.
 @param null
 @return null
 */
-function loginUser (){
+function loginUser(){
     $.ajax({
         type: "POST",
         url: "/login/",
