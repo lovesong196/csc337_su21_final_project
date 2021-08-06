@@ -28,7 +28,7 @@ const GameSchema = new Schema({
         chessBoard: [{type: Number}]
 })
 const RoomSchema = new Schema({
-        index: String,
+        name: String,
         password: String,
         playerBlack: Schema.Types.ObjectId,
         playerWhite: Schema.Types.ObjectId,
@@ -38,6 +38,8 @@ const RoomSchema = new Schema({
 const Session = mongoose.model('Session', SessionSchema)
 const Account = mongoose.model('Account', AccountSchema)
 const User    = mongoose.model('User'   , UserSchema   )
+const Game    = mongoose.model('Game'   , GameSchema   )
+const Room    = mongoose.model('Room'   , RoomSchema   )
 
 /*************************
  *    Express Routes     *
@@ -51,7 +53,8 @@ const iterations = 1000
 const cookieExpire = 30 * 60 * 1000;
 const MSG = {
     SUCCESS: 'SUCCESS',
-    ERROR: 'ERROR'
+    ERROR: 'ERROR',
+    FULL: 'The room is Full'
 }
 // ======= CONST ENDS ======= //
 // ==== UTILITY FUNCTIONS === //
@@ -131,7 +134,7 @@ app.post("/login/", (req, res)=>{
     .then((account) => {
         hashPass(password, account.salt, (salt, hash)=>{
             if(hash == account.hash){
-                res.cookie("login", genSession(), {maxAge: cookieExpire})
+                res.cookie("login", genSession(username), {maxAge: cookieExpire})
                 res.send(MSG.SUCCESS)
             } else {
                 res.send(MSG.ERROR)
@@ -160,8 +163,8 @@ app.get('/index.html', (req, res)=>{
          res.sendFile('public_html/index.html', { root: '.' })
     } else {
         Session.findById(ObjectId(session._id))
-            .then((results)=>{
-                if(results.length == 0){
+            .then((result)=>{
+                if(result == null){
                     res.sendFile('public_html/index.html', { root: '.' })
                 } else {
                     res.redirect('/lobby.html')
@@ -175,8 +178,8 @@ app.get('/lobby.html', (req, res)=>{
          res.redirect('index.html')
     } else {
         Session.findById(ObjectId(session._id))
-            .then((results)=>{
-                if(results.length == 0){
+            .then((result)=>{
+                if(result == null){ 
                     res.redirect('index.html')
                     
                 } else {
@@ -185,23 +188,6 @@ app.get('/lobby.html', (req, res)=>{
             })
     }
 })
-app.get('/game.html', (req, res)=>{
-    const session = req.cookies.login
-    if(!session){
-         res.redirect('index.html')
-    } else {
-        Session.findById(ObjectId(session._id))
-            .then((results)=>{
-                if(results.length == 0){
-                    res.redirect('index.html')
-                    
-                } else {
-                    res.sendFile('public_html/game.html', { root: '.' })
-                }
-            })
-    }
-})
-
 
 
 function checkVertical (board){
@@ -317,7 +303,130 @@ return false;
 
 app.use(express.static('public_html'))
 // ====== Game Related Routes ======//
-app.post("/create/")
+app.get('/game/:roomId', (req, res)=>{
+    const session = req.cookies.login
+    if(!session){
+         res.redirect('index.html')
+    } else {
+        Session.findById(ObjectId(session._id))
+        .then((result)=>{
+            if(result == null){
+                res.redirect('index.html')
+                
+            } else {
+                res.sendFile('public_html/game.html', { root: '.' })
+            }
+        })
+    }
+})
+
+app.get('/rooms', (req, res)=>{
+    Room.find({})
+    .then((results)=>{
+        res.json(results)
+    })
+})
+app.get('/get/room/:roomId', (req, res)=>{
+    let roomId = req.params.roomId
+    Room.findById(ObjectId(roomId))
+    .then((result)=>{
+        res.json(result)
+    })
+})
+app.post("/create/", (req, res)=>{
+    // check if session is valid
+    const session = req.cookies.login
+    const lobbyName = req.body['lobbyName']
+    const isPrivate = req.body['isPrivate']
+    const password = req.body['password']
+    const color = req.body['color']
+    if(!session){
+        res.redirect('index.html')
+        return
+    }
+    Session.findById(ObjectId(session._id))
+    .then((result)=>{
+        if(result == null){
+            res.redirect('index.html')
+            throw new Error('Session has expired.')
+        }
+        // get current userid
+        return result
+    })
+    .then((result)=>{
+        return User.find({username: result.username}).exec()
+    }, errHandler)
+    .then((results)=>{
+        if(results.length == 0){
+            res.send(MSG.ERROR)
+            throw new Error('User not found')
+        }
+        const user = results[0]
+        var passwordTemp, playerBlackTemp, playerWhiteTemp
+        if(isPrivate){
+            passwordTemp = password
+        } else {
+            passwordTemp = null
+        }
+        if(color == 'black'){
+            playerBlackTemp = user._id
+            playerWhiteTemp = null
+        } else {
+            playerBlackTemp = null
+            playerWhiteTemp = user._id
+        }
+        const newRoom = Room({
+            name: lobbyName,
+            password: passwordTemp,
+            playerBlack: playerBlackTemp,
+            playerWhite: playerWhiteTemp,
+            game: null
+        })
+        newRoom.save(errHandler)
+    }, errHandler)
+    .catch(errHandler)
+
+})
+app.post('/join/:roomId', (req, res)=>{
+    const session = req.cookies.login
+    let roomId = req.params.roomId
+    if(!session){
+        res.redirect('index.html')
+        return
+    }
+    Session.findById(ObjectId(session._id))
+    .then((result)=>{
+        if(result == null){
+            res.redirect('index.html')
+            throw new Error('Session has expired.')
+        }
+        // get current userid
+        return result
+    })
+    .then((result)=>{
+        return User.find({username: result.username}).exec()
+    }, errHandler)
+    .then((results)=>{
+        let user = results[0]
+        Room.find({_id: roomId})
+        .then((results)=>{
+            let room = results[0]
+            if(room.playerBlack == null){
+                room.playerBlack = user._id
+                room.save(errHandler)
+                res.send(MSG.SUCCESS)
+            } else if(room.playerWhite == null){
+                room.playerWhite = user._id
+                room.save(errHandler)
+                res.send(MSG.SUCCESS)
+            } else {
+                res.send('The room is fall')
+                return
+            }
+        })
+    }, errHandler)
+    
+})
 
 // ====== Game Related Routes Ends======//
 app.listen(port, () => {

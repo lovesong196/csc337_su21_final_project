@@ -11,7 +11,7 @@
         <h1>Join or Create a Lobby</h1>
 
         <body> 
-                <table>
+                <table id='roomList'>
                         <tr id='header'> <td class='room'>Lobby Name</td> <td> Status </td></tr>
                 </table>
 
@@ -19,6 +19,10 @@
                 <input type="submit" class='button' value="Create Room" onclick='createRoom();'>
                 <div id="createOptionsWrapper">
                         <table id="createOptions">
+                                <tr>
+                                        <td> <label for='lobbyName'>Lobby Name</label></td>
+                                        <td> <input type="text" name='name' id='lobbyName'></td>
+                                </tr>
                                 <tr>
                                         <td> <label for='isPrivate'>Require Password</label></td>
                                         <td><input type="checkbox" name='isPrivate' id='isPrivate'></td>
