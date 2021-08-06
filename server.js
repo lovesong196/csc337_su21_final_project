@@ -156,6 +156,9 @@ setInterval(()=>{
     })
 }, 10 * 1000)
 // ========= LOGIN ENDS ===== //
+app.get('/', (req, res)=>{
+    res.redirect('/index.html')
+})
 app.get('/index.html', (req, res)=>{
     // check if session is valid
     const session = req.cookies.login
