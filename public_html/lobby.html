@@ -5,6 +5,7 @@
                 <meta charset="utf-8">
                 <title>Lobby</title>
                 <link rel="icon" href="/favicon.ico">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
                 <link rel="stylesheet" href="css/styleL.css">
         </head>
         <h1>Join or Create a Lobby</h1>
@@ -20,10 +21,34 @@
                         
                 </table>
 
-                        <input type="submit" class='button' value="Play Against AI" onclick='playAI();'>
-                        <input type="submit" class='button' value="Create Room" onclick='createRoom();'>
-                
-        
-                <script src="js/scripts.js"></script>
+                <input type="submit" class='button' value="Play Against AI" onclick='playAI();'>
+                <input type="submit" class='button' value="Create Room" onclick='createRoom();'>
+                <div id="createOptionsWrapper">
+                        <table id="createOptions">
+                                <tr>
+                                        <td> <label for='isPrivate'>Require Password</label></td>
+                                        <td><input type="checkbox" name='isPrivate' id='isPrivate'></td>
+                                </tr>
+                                <tr>
+                                        <td> <label for='password'>Password</label></td>
+                                        <td> <input type="password" name='password' id='password'></td>
+                                </tr>
+                                <tr>
+                                        <td> <label for="color">Color</label></td>
+                                        <td> 
+                                             <select name="color" id='color'>
+                                                <option value="black">Black</option>
+                                                <option value="white">White</option>        
+                                             </select>
+                                        </td>
+                                </tr>
+                                <tr>
+                                        <td><input type="submit" value='Create' onclick="create()"> </td>
+                                        <td><input type="submit" value='Cancel' onclick="cancel()"> </td>
+                                </tr>
+                        </table>
+                        <div></div>
+                </div>
+                <script src="js/lobby.js"></script>
         </body>
 </html>

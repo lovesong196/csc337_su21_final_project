@@ -51,7 +51,7 @@ td{
 
 }
 
-.button{
+.button, input[type='submit']{
         margin:10px;
         font-size:25px;
 }
@@ -61,5 +61,9 @@ img{
         display:inline;
 }
 
-
-
+#createOptions {
+        width: 40%;
+}
+#createOptionsWrapper{
+        display: none;
+}

@@ -23,6 +23,17 @@ const UserSchema = new Schema({
         status: String,
         room: Schema.Types.ObjectId
 })
+const GameSchema = new Schema({
+        next: String,
+        chessBoard: [{type: Number}]
+})
+const RoomSchema = new Schema({
+        index: String,
+        password: String,
+        playerBlack: Schema.Types.ObjectId,
+        playerWhite: Schema.Types.ObjectId,
+        game: Schema.Types.ObjectId
+})
 // Models
 const Session = mongoose.model('Session', SessionSchema)
 const Account = mongoose.model('Account', AccountSchema)
@@ -191,6 +202,10 @@ app.get('/game.html', (req, res)=>{
     }
 })
 app.use(express.static('public_html'))
+// ====== Game Related Routes ======//
+app.post("/create/")
+
+// ====== Game Related Routes Ends======//
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
