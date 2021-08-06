@@ -2,6 +2,7 @@ var roomId = window.location.pathname.split('/')[2]
 roomId = roomId.substring(3, roomId.length - 3)
 var readyBlack = false
 var readyWhite = false
+var currPlayer
 function genButtons(){
     let board = $('#board')
     for(let row = 0; row < 15; row++){
@@ -12,6 +13,7 @@ function genButtons(){
     }
 }
 function init(){
+    if(readyBlack && readyWhite) return;
     function initBlack(id){
         $.ajax({
             type: "POST",
@@ -22,6 +24,7 @@ function init(){
             contentType:"application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
+                readyBlack = true
                 $('#black').html(`Black: ${response.username}`)
             }
         });
@@ -36,10 +39,19 @@ function init(){
             contentType:"application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
+                readyWhite = true
                 $('#white').html(`White: ${response.username}`)
             }
         });
     }
+    $.ajax({
+        type: "GET",
+        url: "/get/curruser",
+        dataType: "text",
+        success: function (response) {
+            currPlayer = response
+        }
+    });
     $.ajax({
         type: "POST",
         url: "/get/room/",
@@ -49,13 +61,13 @@ function init(){
         contentType:"application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
-            console.log(response)
             if(response.playerBlack != null){
                 initBlack(response.playerBlack)
             }
             if(response.playerWhite != null){
                 initWhite(response.playerWhite)
             }
+            $('#next').html('Next: ' + response.next)
             
         }
     });
@@ -63,5 +75,7 @@ function init(){
 function place(row, col){
     console.log(row, col)
 }
+
 genButtons()
 init()
+setInterval(()=>init(), 500)

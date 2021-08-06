@@ -2,7 +2,6 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cookieParser = require('cookie-parser')
 const crypto = require('crypto')
-const { resourceLimits } = require('worker_threads')
 /*************************
  *    MongoDB settings   *
  *************************/
@@ -24,22 +23,19 @@ const UserSchema = new Schema({
         status: String,
         room: Schema.Types.ObjectId
 })
-const GameSchema = new Schema({
-        next: String,
-        chessBoard: [{type: Number}]
-})
 const RoomSchema = new Schema({
         name: String,
         password: String,
         playerBlack: Schema.Types.ObjectId,
         playerWhite: Schema.Types.ObjectId,
+        next: String,
+        chessBoard: [{type: String}],
         game: Schema.Types.ObjectId
 })
 // Models
 const Session = mongoose.model('Session', SessionSchema)
 const Account = mongoose.model('Account', AccountSchema)
 const User    = mongoose.model('User'   , UserSchema   )
-const Game    = mongoose.model('Game'   , GameSchema   )
 const Room    = mongoose.model('Room'   , RoomSchema   )
 
 /*************************
@@ -49,7 +45,7 @@ const app = express()
 app.use(express.json())
 app.use(cookieParser())
 // ========= CONST ========== //
-const port = 3000
+const port = 80
 const iterations = 1000
 const cookieExpire = 30 * 60 * 1000;
 const MSG = {
@@ -157,6 +153,9 @@ setInterval(()=>{
     })
 }, 10 * 1000)
 // ========= LOGIN ENDS ===== //
+app.get('/', (req, res)=>{
+    res.redirect('/index.html')
+})
 app.get('/index.html', (req, res)=>{
     // check if session is valid
     const session = req.cookies.login
@@ -297,11 +296,6 @@ function checkDiagRightLeft (board){
 return false;
 }
 
-
-
-
-
-
 app.use(express.static('public_html'))
 // ====== Game Related Routes ======//
 app.get('/game/:roomId', (req, res)=>{
@@ -327,6 +321,13 @@ app.get('/rooms', (req, res)=>{
         res.json(results)
     })
 })
+app.get('/get/curruser', (req, res)=>{
+    const session = req.cookies.login
+    if(!session){
+        res.redirect('/index.html')
+    }
+    res.send(session.username)
+})
 app.post('/get/user/', (req, res)=>{
     let userId = req.body.userId
     User.findById(ObjectId(userId))
@@ -335,7 +336,7 @@ app.post('/get/user/', (req, res)=>{
     })
 })
 app.post('/get/room/', (req, res)=>{
-    let roomId = req.body.roomIdFr
+    let roomId = JSON.parse(req.body.roomId)
     Room.findById(ObjectId(roomId))
     .then((result)=>{
         res.json(result)
@@ -388,10 +389,11 @@ app.post("/create/", (req, res)=>{
             password: passwordTemp,
             playerBlack: playerBlackTemp,
             playerWhite: playerWhiteTemp,
-            game: null
+            game: null,
+            next: 'Black'
         })
         newRoom.save(errHandler)
-        res.send(newRoom._id)
+        res.send(newRoom._id.toString)
     }, errHandler)
     .catch(errHandler)
 
