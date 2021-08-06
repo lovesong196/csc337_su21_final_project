@@ -201,6 +201,120 @@ app.get('/game.html', (req, res)=>{
             })
     }
 })
+
+
+
+function checkVertical (board){
+    y = pos[coords][1]
+    let checkDuplicates = new Set();
+
+    for(i=0; i <= board[0].length - 6; i++){
+      checkDuplicates.add(board[i][y]);
+      checkDuplicates.add(board[i+1][y]);
+      checkDuplicates.add(board[i+2][y]);
+      checkDuplicates.add(board[i+3][y]);
+      checkDuplicates.add(board[i+4][y]);
+      if (checkDuplicates.size==1){
+        return true;
+      }
+      checkDuplicates.clear();
+    }
+    return false;
+}
+
+function checkHorizontal (board) {
+    x = pos[coords][0]
+    let checkDuplicates = new Set();
+
+    checkDuplicates.add(board[x][0]);
+    for(i=1; i <= board[0].length - 6; i++){
+      checkDuplicates.add(board[x][i]);
+      checkDuplicates.add(board[x][i+1]);
+      checkDuplicates.add(board[x][i+2]);
+      checkDuplicates.add(board[x][i+3]);
+      checkDuplicates.add(board[x][i+4]);
+      if (checkDuplicates.size==1){
+        return true;
+      }
+      checkDuplicates.clear();
+    }
+    return false;
+}
+
+function checkDiagLeftRight (board) {
+    x = board[0].length-5
+    currX = board[0].length-7
+    y = 0
+    
+    let checkDuplicates = new Set();
+  
+    while (!(x == 0) || !(y == board[0].length - 5)){
+      checkDuplicates.add(board[x][y]);
+      checkDuplicates.add(board[x+1][y+1]);
+      checkDuplicates.add(board[x+2][y+2]);
+      checkDuplicates.add(board[x+3][y+3]);
+      checkDuplicates.add(board[x+4][y+4]);
+      console.log(checkDuplicates)
+      if (checkDuplicates.size==1){
+        return true;
+      }
+      if (x == board[0].length - 5 || y == board[0].length - 5){
+        if (currX > 0){
+          x = currX
+          y = 0
+        }else{
+          x = 0
+          y = Math.abs(currX);
+        }
+        currX -= 1
+      }else{
+        x += 1
+        y += 1
+      }
+      checkDuplicates.clear();
+    }
+    return false;
+}
+
+function checkDiagRightLeft (board){
+
+    x = board[0].length-5
+    currX = board[0].length-7
+    y = board[0].length -1
+
+    let checkDuplicates = new Set();
+    while (!(x == 0) || !(y == 4)){
+    checkDuplicates.add(board[x][y]);
+    checkDuplicates.add(board[x+1][y-1]);
+    checkDuplicates.add(board[x+2][y-2]);
+    checkDuplicates.add(board[x+3][y-3]);
+    checkDuplicates.add(board[x+4][y-4]);
+    if (checkDuplicates.size==1){
+        return true;
+    }
+    if (x == board[0].length - 5 || y == 4){
+        if (currX > 0){
+        x = currX
+        y = board[0].length -1
+        }else{
+        x = 0
+        y = board[0].length -1 + currX
+        }
+        currX -= 1
+    }else{
+        x += 1
+        y -= 1
+    }
+    checkDuplicates.clear();
+}
+return false;
+}
+
+
+
+
+
+
 app.use(express.static('public_html'))
 // ====== Game Related Routes ======//
 app.post("/create/")

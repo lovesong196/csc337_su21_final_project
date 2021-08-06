@@ -1,9 +1,10 @@
 body{
 	margin:0px;
 }
+
 .player{
 	padding-bottom:15px;
-	position:fixed;
+	position:absolute;
 	width:50%;
 	background:grey;
 	font-size:30px;
@@ -12,13 +13,12 @@ body{
 }
 
 #player1{
-
 	padding-left:10px;
 }
 
 #player2{
+
 	text-align:right;
-	top:0px;
 	right:0px;
 	padding-right:10px;
 }
@@ -30,26 +30,20 @@ input{
 }
 
 .ready{
-	position:fixed;
+	position:absolute;
 	text-align:center;
 	width:50%;
 	margin:0px;
 	top:10px;
 }
 
-#readyP1{
-}
-
-#readyP2{
-
-}
-
 #boardImg{
-	float:50%;
-	margin-top:80px	
+	
+	transform: translate(65%);
+	margin-top:80px;
+	
 }
 
-#board{
-	text-align:center;
-
+.click{
+	cursor:pointer;
 }
