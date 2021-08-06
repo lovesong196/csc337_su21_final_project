@@ -53,7 +53,7 @@ function create(){
         dataType: "text",
         contentType:"application/json; charset=utf-8",
         success: function (response) {
-            console.log(response)
+            window.location.href='/game/' + response
         }
     });
 }

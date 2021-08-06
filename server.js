@@ -2,6 +2,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cookieParser = require('cookie-parser')
 const crypto = require('crypto')
+const { resourceLimits } = require('worker_threads')
 /*************************
  *    MongoDB settings   *
  *************************/
@@ -175,12 +176,12 @@ app.get('/index.html', (req, res)=>{
 app.get('/lobby.html', (req, res)=>{
     const session = req.cookies.login
     if(!session){
-         res.redirect('index.html')
+         res.redirect('/index.html')
     } else {
         Session.findById(ObjectId(session._id))
             .then((result)=>{
                 if(result == null){ 
-                    res.redirect('index.html')
+                    res.redirect('/index.html')
                     
                 } else {
                     res.sendFile('public_html/lobby.html', { root: '.' })
@@ -306,12 +307,12 @@ app.use(express.static('public_html'))
 app.get('/game/:roomId', (req, res)=>{
     const session = req.cookies.login
     if(!session){
-         res.redirect('index.html')
+         res.redirect('/index.html')
     } else {
         Session.findById(ObjectId(session._id))
         .then((result)=>{
             if(result == null){
-                res.redirect('index.html')
+                res.redirect('/index.html')
                 
             } else {
                 res.sendFile('public_html/game.html', { root: '.' })
@@ -326,8 +327,15 @@ app.get('/rooms', (req, res)=>{
         res.json(results)
     })
 })
-app.get('/get/room/:roomId', (req, res)=>{
-    let roomId = req.params.roomId
+app.post('/get/user/', (req, res)=>{
+    let userId = req.body.userId
+    User.findById(ObjectId(userId))
+    .then((result)=>{
+        res.json(result)
+    })
+})
+app.post('/get/room/', (req, res)=>{
+    let roomId = req.body.roomIdFr
     Room.findById(ObjectId(roomId))
     .then((result)=>{
         res.json(result)
@@ -341,13 +349,13 @@ app.post("/create/", (req, res)=>{
     const password = req.body['password']
     const color = req.body['color']
     if(!session){
-        res.redirect('index.html')
+        res.redirect('/index.html')
         return
     }
     Session.findById(ObjectId(session._id))
     .then((result)=>{
         if(result == null){
-            res.redirect('index.html')
+            res.redirect('/index.html')
             throw new Error('Session has expired.')
         }
         // get current userid
@@ -383,6 +391,7 @@ app.post("/create/", (req, res)=>{
             game: null
         })
         newRoom.save(errHandler)
+        res.send(newRoom._id)
     }, errHandler)
     .catch(errHandler)
 
@@ -391,13 +400,13 @@ app.post('/join/:roomId', (req, res)=>{
     const session = req.cookies.login
     let roomId = req.params.roomId
     if(!session){
-        res.redirect('index.html')
+        res.redirect('/index.html')
         return
     }
     Session.findById(ObjectId(session._id))
     .then((result)=>{
         if(result == null){
-            res.redirect('index.html')
+            res.redirect('/index.html')
             throw new Error('Session has expired.')
         }
         // get current userid
