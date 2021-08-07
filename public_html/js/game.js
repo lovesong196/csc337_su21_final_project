@@ -4,6 +4,7 @@ var readyWhite = false
 var currPlayer, currColor, blackUsername, whiteUsername
 var board = []
 var roomBuffer
+var isEnd = false
 for(let i = 0; i < 15; i ++){
     board.push([null, null, null, null, null, null, null, null, null, null, null, null, null, null, null])
 }
@@ -122,6 +123,10 @@ function updateBoard(){
     });
 }
 function place(row, col){
+    if(isEnd){
+        alert('Game is over')
+        return
+    }
     if(roomBuffer.next != currColor){
         alert('Not Your turn yet')
         return
@@ -157,46 +162,51 @@ var update = setInterval(()=>updateBoard(), 300)
 var checkInterval = setInterval(()=>{
     let winner = check()
     if(winner != false){
+        isEnd = true
         alert(winner + ' wins!')
         clearInterval(checkInterval)
     }
 }, 500)
+
 function checkVertical (board){
-    y = 0
-    let checkDuplicates = new Set();
-
-    for(i=0; i <= board[0].length - 6; i++){
-      checkDuplicates.add(board[i][y]);
-      checkDuplicates.add(board[i+1][y]);
-      checkDuplicates.add(board[i+2][y]);
-      checkDuplicates.add(board[i+3][y]);
-      checkDuplicates.add(board[i+4][y]);
-      if (checkDuplicates.size==1 && Array.from(checkDuplicates)[0] != null){
-        return Array.from(checkDuplicates)[0];
+    for(let col = 0; col < 15; col++){
+      for(let row = 0; row < 10; row ++){
+        if(
+          board[row    ][col] == board[row + 1][col] &&
+          board[row + 1][col] == board[row + 2][col] &&
+          board[row + 2][col] == board[row + 3][col] &&
+          board[row + 3][col] == board[row + 4][col] 
+        ) {
+            if(board[row][col] == null){
+                continue
+            }
+          return board[row][col]
+        }
       }
-      checkDuplicates.clear();
-    }
-    return false;
+  }
+  return false
 }
 
+  
+  
 function checkHorizontal (board) {
-    x = 0
-    let checkDuplicates = new Set();
-
-    checkDuplicates.add(board[x][0]);
-    for(i=1; i <= board[0].length - 6; i++){
-      checkDuplicates.add(board[x][i]);
-      checkDuplicates.add(board[x][i+1]);
-      checkDuplicates.add(board[x][i+2]);
-      checkDuplicates.add(board[x][i+3]);
-      checkDuplicates.add(board[x][i+4]);
-      if (checkDuplicates.size==1 && Array.from(checkDuplicates)[0] != null){
-        return Array.from(checkDuplicates)[0];
+      for(let row = 0; row < 15; row++){
+          for(let col = 0; col < 10; col ++){
+            if(
+              board[row][col  ] == board[row][col + 1] &&
+              board[row][col+1] == board[row][col + 2] &&
+              board[row][col+2] == board[row][col + 3] &&
+              board[row][col+3] == board[row][col + 4] 
+            ) {
+              if(board[row][col] == null){
+                  continue
+              }
+              return board[row][col]
+            }
+          }
       }
-      checkDuplicates.clear();
-    }
-    return false;
-}
+      return false
+  }
 
 function checkDiagLeftRight (board) {
     x = board[0].length-5
