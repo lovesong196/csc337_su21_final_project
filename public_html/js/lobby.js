@@ -81,3 +81,7 @@ $.ajax({
         getRooms(response)
     }
 });
+
+function goToHelp(){
+    document.location.href = 'help.html'
+}
