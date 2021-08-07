@@ -93,10 +93,10 @@ function drawBoard(){
                 case null:
                     continue
                 case 'Black':
-                    $(`div[col=${col}][row=${row}]`).html(`<img src='/Images/Black.png' width='36px' height>`)
+                    $(`div[col=${col}][row=${row}]`).html(`<img src='/Images/black.png' width='36px' height>`)
                     break
                 case 'White':
-                    $(`div[col=${col}][row=${row}]`).html(`<img src='/Images/White.png' width='36px' height>`)
+                    $(`div[col=${col}][row=${row}]`).html(`<img src='/Images/white.png' width='36px' height>`)
                     break
             }
             
