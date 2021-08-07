@@ -57,3 +57,6 @@ function loginUser(){
     })
 }
 
+function goToHelp(){
+    document.location.href = 'help.html'
+}
