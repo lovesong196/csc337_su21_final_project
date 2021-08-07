@@ -12,6 +12,9 @@ function cancel(){
     $('#createOptionsWrapper').css('display', 'none')
     isFormHidden = true
 }
+function goToHelp(){
+    document.location.href = 'help.html'
+}
 function join(id){
     for(room of rooms){
         if(id == room._id){
