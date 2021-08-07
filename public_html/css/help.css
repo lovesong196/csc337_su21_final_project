@@ -1,0 +1,27 @@
+h1{
+	text-align: center;
+	font-family: helvetica;
+	font-size:50px
+}
+
+body{
+    background: rgb(255, 255, 179);
+}
+
+#instr{
+    font-family:'Courier New';
+    background: rgb(230,230,230);
+    border: 2px dashed red;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+	margin-left:40px;
+	margin-right:40px;
+	padding:10px;
+}
+
+input{
+    font-size:20px;
+    margin-top:10px;
+    margin-left:40px;
+
+}
