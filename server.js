@@ -1,3 +1,8 @@
+/*
+ * Author: Chen Song, Adnan
+ * Date  : 2021/08/06
+ * Purpose: This is the backend part of web application Gomoku, a simple chess game
+ */
 const express = require('express')
 const mongoose = require('mongoose')
 const cookieParser = require('cookie-parser')
@@ -72,6 +77,7 @@ function genSession(username){
     newSession.save(errHandler)
     return newSession
 }
+// hash the password then run the callback function
 function hashPass(password, salt, cb){
     if(!salt){
         salt = crypto.randomBytes(64).toString('base64')
@@ -82,6 +88,7 @@ function hashPass(password, salt, cb){
     })
 }
 
+// this route is used to add a new user
 app.post('/add/user', (req, res)=>{
     const username = req.body['username']
     const password = req.body['password']
@@ -112,6 +119,8 @@ app.post('/add/user', (req, res)=>{
     .catch(errHandler)
 })
 
+// This route handles login request
+// It will set the cookie after verification
 app.post("/login/", (req, res)=>{
     var username = req.body['username']
     var password = req.body['password']
@@ -188,113 +197,6 @@ app.get('/lobby.html', (req, res)=>{
     }
 })
 
-
-function checkVertical (board){
-    y = pos[coords][1]
-    let checkDuplicates = new Set();
-
-    for(i=0; i <= board[0].length - 6; i++){
-      checkDuplicates.add(board[i][y]);
-      checkDuplicates.add(board[i+1][y]);
-      checkDuplicates.add(board[i+2][y]);
-      checkDuplicates.add(board[i+3][y]);
-      checkDuplicates.add(board[i+4][y]);
-      if (checkDuplicates.size==1){
-        return true;
-      }
-      checkDuplicates.clear();
-    }
-    return false;
-}
-
-function checkHorizontal (board) {
-    x = pos[coords][0]
-    let checkDuplicates = new Set();
-
-    checkDuplicates.add(board[x][0]);
-    for(i=1; i <= board[0].length - 6; i++){
-      checkDuplicates.add(board[x][i]);
-      checkDuplicates.add(board[x][i+1]);
-      checkDuplicates.add(board[x][i+2]);
-      checkDuplicates.add(board[x][i+3]);
-      checkDuplicates.add(board[x][i+4]);
-      if (checkDuplicates.size==1){
-        return true;
-      }
-      checkDuplicates.clear();
-    }
-    return false;
-}
-
-function checkDiagLeftRight (board) {
-    x = board[0].length-5
-    currX = board[0].length-7
-    y = 0
-    
-    let checkDuplicates = new Set();
-  
-    while (!(x == 0) || !(y == board[0].length - 5)){
-      checkDuplicates.add(board[x][y]);
-      checkDuplicates.add(board[x+1][y+1]);
-      checkDuplicates.add(board[x+2][y+2]);
-      checkDuplicates.add(board[x+3][y+3]);
-      checkDuplicates.add(board[x+4][y+4]);
-      console.log(checkDuplicates)
-      if (checkDuplicates.size==1){
-        return true;
-      }
-      if (x == board[0].length - 5 || y == board[0].length - 5){
-        if (currX > 0){
-          x = currX
-          y = 0
-        }else{
-          x = 0
-          y = Math.abs(currX);
-        }
-        currX -= 1
-      }else{
-        x += 1
-        y += 1
-      }
-      checkDuplicates.clear();
-    }
-    return false;
-}
-
-function checkDiagRightLeft (board){
-
-    x = board[0].length-5
-    currX = board[0].length-7
-    y = board[0].length -1
-
-    let checkDuplicates = new Set();
-    while (!(x == 0) || !(y == 4)){
-    checkDuplicates.add(board[x][y]);
-    checkDuplicates.add(board[x+1][y-1]);
-    checkDuplicates.add(board[x+2][y-2]);
-    checkDuplicates.add(board[x+3][y-3]);
-    checkDuplicates.add(board[x+4][y-4]);
-    if (checkDuplicates.size==1){
-        return true;
-    }
-    if (x == board[0].length - 5 || y == 4){
-        if (currX > 0){
-        x = currX
-        y = board[0].length -1
-        }else{
-        x = 0
-        y = board[0].length -1 + currX
-        }
-        currX -= 1
-    }else{
-        x += 1
-        y -= 1
-    }
-    checkDuplicates.clear();
-}
-return false;
-}
-
 app.use(express.static('public_html'))
 // ====== Game Related Routes ======//
 app.get('/game/:roomId', (req, res)=>{
@@ -314,12 +216,15 @@ app.get('/game/:roomId', (req, res)=>{
     }
 })
 
+// return a list of room documents
 app.get('/rooms', (req, res)=>{
     Room.find({})
     .then((results)=>{
         res.json(results)
     })
 })
+
+// send back the current username
 app.get('/get/curruser', (req, res)=>{
     const session = req.cookies.login
     if(!session){
@@ -327,6 +232,8 @@ app.get('/get/curruser', (req, res)=>{
     }
     res.send(session.username)
 })
+
+// this route is for user to make a move
 app.post('/makemove/', (req, res)=>{
     const move = req.body.move
     const roomId = req.body.roomId
@@ -343,6 +250,7 @@ app.post('/makemove/', (req, res)=>{
     })
     
 })
+// get the user by id
 app.post('/get/user/', (req, res)=>{
     let userId = req.body.userId
     User.findById(ObjectId(userId))
@@ -350,6 +258,7 @@ app.post('/get/user/', (req, res)=>{
         res.json(result)
     })
 })
+// get the room by id
 app.post('/get/room/', (req, res)=>{
     let roomId = req.body.roomId
     if(roomId[0] == '\'' || roomId == '\"'){
@@ -360,6 +269,7 @@ app.post('/get/room/', (req, res)=>{
         res.json(result)
     })
 })
+// create a room
 app.post("/create/", (req, res)=>{
     // check if session is valid
     const session = req.cookies.login
@@ -417,6 +327,7 @@ app.post("/create/", (req, res)=>{
     .catch(errHandler)
 
 })
+// join a room
 app.post('/join/:roomId', (req, res)=>{
     const session = req.cookies.login
     let roomId = req.params.roomId
