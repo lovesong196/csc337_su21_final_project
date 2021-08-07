@@ -47,11 +47,10 @@ function loginUser(){
         dataType: "text",
         contentType:"application/json; charset=utf-8",
         success: function (response) {
-            console.log(response)
             if(response == "SUCCESS"){
                 document.location.href="/lobby.html"
             } else {
-                $("#loginInfo").text("Invalid login information provided.")
+                $("#errMsg").html("<div style=\"color: red\">Error.</div>")
             }
             
         }

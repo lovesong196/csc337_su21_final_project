@@ -50,10 +50,11 @@ function create(){
                 color: $('#color').val()
             }
         ),
-        dataType: "text",
+        dataType: "json",
         contentType:"application/json; charset=utf-8",
         success: function (response) {
-            window.location.href='/game/' + response.substring()
+            console.log(response.id)
+            window.location.href='/game/' + response.id
         }
     });
 }

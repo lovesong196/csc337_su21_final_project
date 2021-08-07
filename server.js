@@ -29,8 +29,7 @@ const RoomSchema = new Schema({
         playerBlack: Schema.Types.ObjectId,
         playerWhite: Schema.Types.ObjectId,
         next: String,
-        chessBoard: [{type: String}],
-        game: Schema.Types.ObjectId
+        lastMove: [{type: String}],
 })
 // Models
 const Session = mongoose.model('Session', SessionSchema)
@@ -328,6 +327,22 @@ app.get('/get/curruser', (req, res)=>{
     }
     res.send(session.username)
 })
+app.post('/makemove/', (req, res)=>{
+    const move = req.body.move
+    const roomId = req.body.roomId
+    Room.findById(roomId)
+    .then((result)=>{
+        result.lastMove = move
+        if(result.next == 'Black'){
+            result.next = 'White'
+        } else {
+            result.next = 'Black'
+        }
+        result.save(errHandler)
+        res.send(MSG.SUCCESS)
+    })
+    
+})
 app.post('/get/user/', (req, res)=>{
     let userId = req.body.userId
     User.findById(ObjectId(userId))
@@ -336,7 +351,10 @@ app.post('/get/user/', (req, res)=>{
     })
 })
 app.post('/get/room/', (req, res)=>{
-    let roomId = JSON.parse(req.body.roomId)
+    let roomId = req.body.roomId
+    if(roomId[0] == '\'' || roomId == '\"'){
+        roomId = roomId.substring(1, roomId.length - 1)
+    }
     Room.findById(ObjectId(roomId))
     .then((result)=>{
         res.json(result)
@@ -389,11 +407,12 @@ app.post("/create/", (req, res)=>{
             password: passwordTemp,
             playerBlack: playerBlackTemp,
             playerWhite: playerWhiteTemp,
-            game: null,
             next: 'Black'
         })
         newRoom.save(errHandler)
-        res.send(newRoom._id.toString)
+        res.json({
+            id: newRoom._id
+        })
     }, errHandler)
     .catch(errHandler)
 
