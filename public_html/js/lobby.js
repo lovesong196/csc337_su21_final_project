@@ -1,4 +1,5 @@
 var isFormHidden = true;
+// calling this function will open/close the form that used to create game rooms.
 function createRoom(){
     if(isFormHidden){
         $('#createOptionsWrapper').css('display', 'block')
@@ -8,6 +9,7 @@ function createRoom(){
         isFormHidden = true
     }
 }
+// close the create room forms
 function cancel(){
     $('#createOptionsWrapper').css('display', 'none')
     isFormHidden = true
@@ -15,7 +17,10 @@ function cancel(){
 function goToHelp(){
     document.location.href = 'help.html'
 }
+// join to the romm with specific id
 function join(id){
+
+    // verify if the password is correct
     for(room of rooms){
         if(id == room._id){
             if(room.password != null){
@@ -27,6 +32,7 @@ function join(id){
             }
         }
     }
+    // make query to server to enter the room
     $.ajax({
         type: "POST",
         url: "/join/" + id,
@@ -41,6 +47,7 @@ function join(id){
         }
     });
 }
+// the actual callback function for create a game rooms
 function create(){
     $.ajax({
         type: "POST",
@@ -62,6 +69,8 @@ function create(){
     });
 }
 var rooms
+// input: an array of room documents
+// This function will display all room in the table together with a join button for each of them
 function getRooms(results){
     rooms = results
     let list = $('#roomList')
@@ -77,6 +86,8 @@ function getRooms(results){
         
     }
 }
+
+// fetch room list and display
 $.ajax({
     type: "GET",
     url: "/rooms",
