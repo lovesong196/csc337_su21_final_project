@@ -5,9 +5,14 @@ var currPlayer, currColor, blackUsername, whiteUsername
 var board = []
 var roomBuffer
 var isEnd = false
+
+/*
+Here we are creatnig the board of the game
+*/
 for(let i = 0; i < 15; i ++){
     board.push([null, null, null, null, null, null, null, null, null, null, null, null, null, null, null])
 }
+
 $.ajax({
     type: "GET",
     url: "/get/curruser",
@@ -168,12 +173,12 @@ var checkInterval = setInterval(()=>{
     }
 }, 500)
 
-    /*
-    This function checks the board Vertically. And if it detects 5 elemnts on the board tha are the same, it rerurns the winner.
+/*
+This function checks the board Vertically. And if it detects 5 elemnts on the board tha are the same, it rerurns the winner.
 
-    @param  A list that contains the placement of all the elements on the board
-    @return winner color or false if no one won
-    */
+@param  A list that contains the placement of all the elements on the board
+@return winner color or false if no one won
+*/
 function checkVertical (board){
     for(let col = 0; col < 15; col++){
       for(let row = 0; row < 10; row ++){
@@ -193,13 +198,13 @@ function checkVertical (board){
   return false
 }
 
-  
-    /*
-    This function checks the board Horizontally.And if it detects 5 elemnts on the board tha are the same, it rerurns the winner.
 
-    @param  A list that contains the placement of all the elements on the board
-    @return winner color or false if no one won
-    */
+/*
+This function checks the board Horizontally.And if it detects 5 elemnts on the board tha are the same, it rerurns the winner.
+
+@param  A list that contains the placement of all the elements on the board
+@return winner color or false if no one won
+*/
 function checkHorizontal (board) {
       for(let row = 0; row < 15; row++){
           for(let col = 0; col < 10; col ++){
@@ -219,12 +224,12 @@ function checkHorizontal (board) {
       return false
   }
 
-    /*
-    This function checks the board diagonally from the bottom left corner of the board, to the top right corner of the  board. And if it detects 5 elemnts on the board tha are the same, it rerurns the winner name.
+/*
+This function checks the board diagonally from the bottom left corner of the board, to the top right corner of the  board. And if it detects 5 elemnts on the board tha are the same, it rerurns the winner name.
 
-    @param  A list that contains the placement of all the elements on the board
-    @return winner color or false if no one won
-    */
+@param  A list that contains the placement of all the elements on the board
+@return winner color or false if no one won
+*/
 function checkDiagLeftRight (board) {
     x = board[0].length-5
     currX = board[0].length-7
@@ -259,12 +264,12 @@ function checkDiagLeftRight (board) {
     return false;
 }
 
-    /*
-    This function checks the board diagonally from the bottom right corner of the board, to the top left corner of the  board. And if it detects 5 elemnts on the board tha are the same, it rerurns the winner name.
+/*
+This function checks the board diagonally from the bottom right corner of the board, to the top left corner of the  board. And if it detects 5 elemnts on the board tha are the same, it rerurns the winner name.
 
-    @param  A list that contains the placement of all the elements on the board
-    @return winner color or false if no one won
-    */
+@param  A list that contains the placement of all the elements on the board
+@return winner color or false if no one won
+*/
 function checkDiagRightLeft (board){
 
     x = board[0].length-5
